@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <title>VisionTune - Image Generation</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: black;
+                color: white;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start; /* Align content closer to the top */
+                padding-top: 20px; /* Add a small gap at the top */
+                min-height: 100vh;
+            }
+            .container {
+                max-width: 1200px;
+                width: 100%;
+                padding: 20px;
+                text-align: center;
+            }
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 0;
+            }
+            .logo {
+                display: flex;
+                align-items: center;
+                font-size: 24px;
+                font-weight: bold;
+            }
+            .logo img {
+                height: 40px;
+                margin-right: 10px;
+            }
+            .logo .vision {
+                color: #a855f7;
+            }
+            .logo .tune {
+                color: white;
+            }
+            nav a {
+                color: white;
+                text-decoration: none;
+                margin-left: 20px;
+            }
+            nav a:hover {
+                color: #a855f7;
+            }
+            form {
+                margin-top: 10px; /* Reduced margin for a more compact layout */
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            input[type="text"] {
+                width: 100%;
+                max-width: 500px;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+            button {
+                padding: 10px 20px;
+                background-color: #a855f7;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+            button:hover {
+                background-color: #9333ea;
+            }
+            h2 {
+                font-size: 24px;
+                color: #a855f7;
+                margin-top: 30px;
+            }
+            .image-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: center;
+                margin-top: 30px;
+            }
+            .image-container div {
+                text-align: center;
+            }
+            .image-container img {
+                max-width: 200px;
+                border: 2px solid #ddd;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            .download-btn {
+                display: inline-block;
+                margin-top: 10px;
+                padding: 5px 10px;
+                background-color: #a855f7;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                font-size: 14px;
+            }
+            .download-btn:hover {
+                background-color: #9333ea;
+            }
+            @media (max-width: 768px) {
+                header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                nav {
+                    width: 100%;
+                    justify-content: space-between;
+                }
+                nav a {
+                    font-size: 14px;
+                    margin-left: 10px;
+                }
+                input[type="text"] {
+                    max-width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="logo">
+                    <img src="/static/logo.png" alt="VisionTune Logo">
+                    <span class="vision">Vision</span><span class="tune">Tune</span>
+                </div>
+                <nav>
+                    <a href="/">Home</a>
+                    <a href="/image">Image</a>
+                    <a href="/video">Video</a>
+                    <a href="/music" class="active">Music</a>
+                    <a href="/chatbot">Chatbot</a>
+                </nav>
+            </header>
+            <form action="/" method="post" id="generate-form">
+                <input type="text" name="prompt" placeholder="Enter your prompt" required>
+                <button type="submit">Generate Images</button>
+            </form>
+            <div id="loading-spinner" style="display: none;">
+                <p>Generating images, please wait...</p>
+            </div>
+        </div>
+        <div class="image-container">
+            {% if images %}
+                {% for image in images %}
+                    <div>
+                        <!-- Add a cache-busting query string using the cache_buster token -->
+                        <img src="{{ url_for('static', filename='generated_images/' + image) }}?t={{ cache_buster }}" alt="Generated Image">
+                        <a href="{{ url_for('download', filename=image) }}" class="download-btn">Download</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No images generated yet. Enter a prompt to generate images.</p>
+            {% endif %}
+        </div>
+            <script>
+                const form = document.getElementById('generate-form');
+                const spinner = document.getElementById('loading-spinner');
+                form.addEventListener('submit', () => {
+                    spinner.style.display = 'block';
+                });
+            </script>
+    </body>
+</html>
