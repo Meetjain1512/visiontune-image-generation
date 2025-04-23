@@ -1,4 +1,4 @@
 flask==2.3.2
-torch==2.0.1
+torch==2.0.1+cpu
 diffusers==0.18.2
 huggingface_hub==0.16.4
